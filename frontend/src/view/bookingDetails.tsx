@@ -109,7 +109,7 @@ const BookingDetails: React.FC = () => {
             onChangeText={text => checkNumber(text)}
             style={styles.dataInput}
             keyboardType="numeric"
-            maxLength={3}
+            maxLength={1}
           />
         </View>
       </View>
@@ -218,7 +218,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 250,
     alignItems: 'center',
-    // backgroundColor: '#1998eb',
     borderRadius: 20,
     paddingVertical: 5,
     marginTop: 10,

@@ -1,3 +1,4 @@
+import Admin from '../view/admin';
 import Home from '../view/home';
 import AboutUs from '../view/aboutus';
 import ContactUs from '../view/contactus';
@@ -6,11 +7,29 @@ import LocationPage from '../view/locationPage';
 import BookingDetails from '../view/bookingDetails';
 import Payment from '../view/payment';
 import PaidBookingList from '../view/paidBookingList';
+import Profile from '../view/profile';
 import SuccessPayment from '../view/successPayment';
 import {useAppContext} from './appContext';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createStackNavigator} from '@react-navigation/stack';
 
-const Stack = createNativeStackNavigator();
+export type RootStackParamsList = {
+  Admin: undefined;
+  AboutUs: undefined;
+  BookingDetails: {texturl?: string};
+  ContactUs: undefined;
+  Home: undefined;
+  LocationPage: {
+    place: string;
+    uri: string;
+    texturl: string;
+  };
+  LoginRegister: undefined;
+  PaidBookingList: undefined;
+  Payment: {totalAmount: number};
+  Profile: undefined;
+  SuccessPayment: undefined;
+};
+const Stack = createStackNavigator<RootStackParamsList>();
 
 function AllScreen(): JSX.Element {
   const {user, isAuthenticated} = useAppContext();
@@ -60,6 +79,18 @@ function AllScreen(): JSX.Element {
               options={{headerShown: false}}
               component={PaidBookingList}
             />
+            <Stack.Screen
+              name="Profile"
+              options={{headerShown: false}}
+              component={Profile}
+            />
+            {
+              <Stack.Screen
+                name="Admin"
+                options={{headerShown: false}}
+                component={Admin}
+              />
+            }
           </>
         ) : (
           <>

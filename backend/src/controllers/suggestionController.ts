@@ -8,6 +8,7 @@ type User = {
   phoneNo: string;
   password: string | undefined;
   user_id: string;
+  userrole: string;
 };
 interface AuthenticatedRequest extends Request {
   user?: User | undefined;
@@ -27,15 +28,17 @@ exports.suggestion = catchAsyncError(
     };
 
     const insertMessageSQL =
-      "INSERT INTO suggesstion (user_id, name, message) VALUES (?, ?, ?)";
+      "INSERT INTO suggestions (user_id, name, message) VALUES (?, ?, ?)";
     const values = [newMessage.user_id, newMessage.name, newMessage.message];
 
-    pool.query(insertMessageSQL, values, (insertError: any) => {
+    pool.query(insertMessageSQL, values, (insertError: any, result: any) => {
       if (insertError) {
         console.error("Error inserting user data: " + insertError);
       } else {
-        console.log("User data inserted successfully");
-        res.status(200).json({ newMessage });
+        if (result.affectedRows >= 1) {
+          console.log("Suggestion inserted successfully");
+          res.status(200).json({ message: "Suggestion Submitted" });
+        }
       }
     });
   }

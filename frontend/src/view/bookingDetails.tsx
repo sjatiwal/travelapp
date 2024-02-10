@@ -6,20 +6,27 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import {useRoute} from '@react-navigation/native';
 import backend from '../helper/axios';
-import {useEffect, useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
 import CalendarPicker from 'react-native-calendar-picker';
 import {format} from 'date-fns';
-import {useAppDispatch, useAppSelector} from '../helper/hooks';
 import {savebookingDetails} from '../actions/bookingDetailsAction';
+import {useAppDispatch, useAppSelector} from '../helper/hooks';
+import {useEffect, useState} from 'react';
+import {useRoute} from '@react-navigation/native';
+import {TextUrl} from '../helper/type';
 
-const BookingDetails: React.FC = () => {
+// for navigation props
+import {RootStackParamsList} from '../routes/allScreen';
+import {StackNavigationProp} from '@react-navigation/stack';
+
+type BokingDetailsScreenProps = {
+  navigation: StackNavigationProp<RootStackParamsList, 'BookingDetails'>;
+};
+
+const BookingDetails: React.FC<BokingDetailsScreenProps> = ({navigation}) => {
   const route = useRoute();
-  const navigation: any = useNavigation();
   const dispatch = useAppDispatch();
-  const texturl = route.params;
+  const {texturl}: TextUrl = route.params || {};
   const {user, isAuthenticated} = useAppSelector(state => state.user);
 
   const [name, setname] = useState('Guest');
@@ -68,6 +75,7 @@ const BookingDetails: React.FC = () => {
   useEffect(() => {
     getName();
   }, [isAuthenticated]);
+
   const finalBookingDetails = {
     user,
     location,
@@ -198,7 +206,7 @@ const styles = StyleSheet.create({
     borderColor: 'grey',
     height: 40,
     color: 'black',
-    font: 'bold',
+    fontWeight: 'bold',
     borderRadius: 10,
     paddingHorizontal: 10,
   },

@@ -1,24 +1,14 @@
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
+import {TableProps, RowData} from '../helper/type';
 
-type HeaderItem = {
-  name: string;
-  data: string;
-};
-
-type RowData = {
-  tripPackage: string;
-  selectedDate: string;
-  location: string;
-  noOfPeople: string;
-  cost: string;
-};
-
-type TableProps = {
-  header: HeaderItem[];
-  rows: RowData[];
-};
-function Table({header, rows}: TableProps) {
+function Table({header, rows, deleteHandler}: TableProps) {
   return (
     <>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -32,14 +22,28 @@ function Table({header, rows}: TableProps) {
               );
             })}
           </View>
-          {rows.map((data, index) => {
+          {rows.map(data => {
             return (
-              <View key={index} style={styles.tableRows}>
+              <View key={data.action} style={styles.tableRows}>
                 {header.map(item => {
                   return (
-                    <Text key={item.data} style={styles.rowCell}>
-                      {data[item.data as keyof RowData]}
-                    </Text>
+                    <React.Fragment key={item.data + data.action}>
+                      {item.data !== 'action' ? (
+                        <Text style={styles.rowCell}>
+                          {data[item.data as keyof RowData]}
+                        </Text>
+                      ) : (
+                        <View style={styles.rowButtonCell}>
+                          <TouchableOpacity
+                            onPress={() =>
+                              deleteHandler(data[item.data as keyof RowData])
+                            }
+                            style={styles.deleteButton}>
+                            <Text style={styles.deleteText}>Delete</Text>
+                          </TouchableOpacity>
+                        </View>
+                      )}
+                    </React.Fragment>
                   );
                 })}
               </View>
@@ -82,9 +86,28 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'black',
     textAlign: 'center',
+    color: '#000000',
     paddingVertical: 10,
     marginLeft: -2,
     width: 170,
+  },
+  rowButtonCell: {
+    borderWidth: 2,
+    borderColor: 'black',
+    alignItems: 'center',
+    paddingVertical: 10,
+    marginLeft: -2,
+    width: 170,
+  },
+  deleteButton: {
+    width: 100,
+    backgroundColor: '#f56942',
+    borderRadius: 5,
+  },
+  deleteText: {
+    textAlign: 'center',
+    paddingVertical: 5,
+    color: '#FFFFFF',
   },
 });
 

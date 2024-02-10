@@ -2,13 +2,10 @@
 import React, {createContext, ReactNode, useContext} from 'react';
 
 import {useAppSelector} from '../helper/hooks';
-
-type User = {
-  name: string;
-};
+import {User} from '../helper/type';
 
 type AppContextType = {
-  user: User | null;
+  user: User[];
   isAuthenticated: boolean;
 };
 

@@ -1,9 +1,15 @@
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {useNavigation} from '@react-navigation/native';
 
-const SuccessPayment: React.FC = () => {
-  const navigation: any = useNavigation();
+// for navigation props
+import {RootStackParamsList} from '../routes/allScreen';
+import {StackNavigationProp} from '@react-navigation/stack';
+
+type SuccessPaymentScreenProps = {
+  navigation: StackNavigationProp<RootStackParamsList, 'SuccessPayment'>;
+};
+
+const SuccessPayment: React.FC<SuccessPaymentScreenProps> = ({navigation}) => {
   return (
     <>
       <View style={styles.container}>

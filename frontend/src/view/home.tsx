@@ -1,4 +1,3 @@
-import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   StyleSheet,
@@ -7,28 +6,27 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import Video from 'react-native-video';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {useNavigation} from '@react-navigation/native';
+import React, {useState, useRef, useEffect} from 'react';
 import {allImages} from '../data/images';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Video from 'react-native-video';
+import {ListItemHomeProps} from '../helper/type';
 
-type ListItemProps = {
-  item: {
-    place: string;
-    uri: string;
-    texturl: string;
-  };
-  index: number;
+// for navigation props
+import {RootStackParamsList} from '../routes/allScreen';
+import {StackNavigationProp} from '@react-navigation/stack';
+
+type HomeScreenProps = {
+  navigation: StackNavigationProp<RootStackParamsList, 'Home'>;
 };
 
-const Home: React.FC = () => {
+const Home: React.FC<HomeScreenProps> = ({navigation}) => {
   const [listWidth, setListWidth] = useState<number>(0);
   const [clientWidth, setClientWidth] = useState<number>(0);
   const [scrollLeft, setScrollLeft] = useState<number>(0);
   const [listboxWidth, setListboxWidth] = useState<number>(0);
 
   const rowRef = useRef<FlatList<any> | null>(null);
-  const navigation: any = useNavigation();
   const handleFlatListSizeChange = (width: number) => {
     setListWidth(width);
   };
@@ -82,7 +80,7 @@ const Home: React.FC = () => {
     }
   }, [scrollLeft, clientWidth]);
 
-  function ListItem({item, index}: ListItemProps): JSX.Element {
+  function ListItem({item, index}: ListItemHomeProps): JSX.Element {
     const marginRight = index < allImages.length - 1 ? 8 : 0;
     return (
       <View style={[styles.imgbox, {marginRight}]} onLayout={getWidth}>

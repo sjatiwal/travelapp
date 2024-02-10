@@ -1,4 +1,3 @@
-import {useState} from 'react';
 import {
   Text,
   View,
@@ -7,26 +6,24 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import backend from '../helper/axios';
+import {messageSentAction} from '../actions/userAction';
+import {useEffect, useState} from 'react';
+import {useAppDispatch, useAppSelector} from '../helper/hooks';
 
 const ContactUs: React.FC = () => {
   const [name, setName] = useState<string>('');
   const [message, setMessage] = useState<string>('');
+  const dispatch = useAppDispatch();
+  const {user} = useAppSelector(state => state.user);
 
-  const messageSent = async (name: string, message: string) => {
-    try {
-      const response = await backend.post('/api/v1/messageSent', {
-        name,
-        message,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  useEffect(() => {
+    setName(user[0]['username']);
+  }, []);
+
   const handleSubmit = () => {
     if (name !== '' && message !== '') {
-      messageSent(name, message);
-      setName(''), setMessage('');
+      dispatch(messageSentAction({name, message}));
+      setMessage('');
     } else {
       Alert.alert(`Please fill the name and suggestion`);
     }
@@ -40,12 +37,7 @@ const ContactUs: React.FC = () => {
         don't hesitate to contact us.
       </Text>
       <View style={styles.form}>
-        <TextInput
-          style={styles.text}
-          value={name}
-          onChangeText={text => setName(text)}
-          placeholder="Enter your name..."
-        />
+        <TextInput editable={false} style={styles.text} value={name} />
         <TextInput
           style={styles.text}
           value={message}
@@ -96,6 +88,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     fontSize: 22,
     backgroundColor: 'white',
+    color: 'black',
   },
   submitButton: {
     backgroundColor: '#3d89f4',

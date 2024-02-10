@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 dotenv.config();
 
+const admin = require("./routes/adminRoute");
 const user = require("./routes/userRoute");
 const suggestion = require("./routes/suggestionRoute");
 const payment = require("./routes/paymentRoute");
@@ -30,14 +31,6 @@ app.use("/api/v1", user);
 app.use("/api/v1", suggestion);
 app.use("/api/v1", payment);
 app.use("/api/v1", travel);
-
-// Error handling middleware
-app.use((err: any, req: any, res: any, next: any) => {
-  // Log the error
-  console.error(err);
-
-  // Handle the error in a way that makes sense for your application
-  res.status(500).send("Internal Server Error");
-});
+app.use("/api/v1", admin);
 
 export default app;

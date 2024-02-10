@@ -11,54 +11,58 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {logoutUser} from '../actions/userAction';
+import {useAppContext} from '../routes/appContext';
 import {useAppDispatch} from '../helper/hooks';
-
-type ListItemProps = {
-  item: {
-    name: string;
-    page: string;
-  };
-  navigation: any;
-  setShowNavList: any;
-};
+import {ListItemHeaderProps, Navigation} from '../helper/type';
 
 function ListItem({
   item,
   navigation,
   setShowNavList,
-}: ListItemProps): JSX.Element {
+}: ListItemHeaderProps): JSX.Element {
   return (
-    <TouchableOpacity
-      style={styles.navLink}
-      onPress={() => [navigation.navigate(item.page), setShowNavList(false)]}>
-      <Text style={styles.navLinkText}>{item.name}</Text>
-    </TouchableOpacity>
+    <>
+      {item.user && (
+        <TouchableOpacity
+          style={styles.navLink}
+          onPress={() => [
+            navigation.navigate(item.page),
+            setShowNavList(false),
+          ]}>
+          <Text style={styles.navLinkText}>{item.name}</Text>
+        </TouchableOpacity>
+      )}
+    </>
   );
 }
 
 const Header: React.FC = () => {
+  const {user, isAuthenticated} = useAppContext();
   const [showNavList, setShowNavList] = useState<boolean>(false);
-  const navigation = useNavigation();
+  const navigation: Navigation = useNavigation();
   const dispatch = useAppDispatch();
   const navListdata = [
     {
-      name: 'Home',
-      page: 'Home',
-    },
-    {
       name: 'About Us',
       page: 'AboutUs',
+      user: true,
     },
     {
       name: 'Contact Us',
       page: 'ContactUs',
+      user: isAuthenticated,
     },
     {
       name: 'Login & Register',
       page: 'LoginRegister',
+      user: !isAuthenticated,
     },
   ];
-
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    setShowNavList(false);
+    navigation.navigate('Home');
+  };
   return (
     <View style={styles.mainContainer}>
       <View style={styles.header}>
@@ -97,13 +101,11 @@ const Header: React.FC = () => {
               />
             )}
           />
-          <TouchableOpacity
-            style={styles.navLink}
-            onPress={() => {
-              dispatch(logoutUser());
-            }}>
-            <Text style={styles.navLinkText}>Logout</Text>
-          </TouchableOpacity>
+          {user && isAuthenticated && (
+            <TouchableOpacity style={styles.navLink} onPress={handleLogout}>
+              <Text style={styles.navLinkText}>Logout</Text>
+            </TouchableOpacity>
+          )}
         </SafeAreaView>
       ) : null}
     </View>

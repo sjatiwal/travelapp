@@ -1,15 +1,22 @@
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
-import {useRoute} from '@react-navigation/native';
-import {useNavigation} from '@react-navigation/native';
-import backend from '../helper/axios';
 import React, {useEffect, useState} from 'react';
+import backend from '../helper/axios';
+import {useRoute} from '@react-navigation/native';
+import {DataType} from '../helper/type';
 
-const LocationPage: React.FC = () => {
+// for navigation props
+import {RootStackParamsList} from '../routes/allScreen';
+import {StackNavigationProp} from '@react-navigation/stack';
+
+type LocationScreenProps = {
+  navigation: StackNavigationProp<RootStackParamsList, 'LocationPage'>;
+};
+
+const LocationPage: React.FC<LocationScreenProps> = ({navigation}) => {
   const route = useRoute();
-  const navigation: any = useNavigation();
   const [details, setDetails] = useState('');
 
-  const {place, uri, texturl}: any = route.params;
+  const {place, uri, texturl}: DataType = route.params || {};
 
   const fetchDetails = async () => {
     const response = await backend.get(`${texturl}`);
@@ -27,7 +34,7 @@ const LocationPage: React.FC = () => {
       <Text style={styles.text}>{details}</Text>
       <TouchableOpacity
         style={styles.bookingbutton}
-        onPress={() => navigation.navigate('BookingDetails', texturl)}>
+        onPress={() => navigation.navigate('BookingDetails', {texturl})}>
         <Text style={styles.bookingbuttontext}>Book Your Trip</Text>
       </TouchableOpacity>
     </View>

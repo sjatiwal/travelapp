@@ -1,4 +1,3 @@
-import {useState} from 'react';
 import {
   Text,
   View,
@@ -6,9 +5,10 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  GestureResponderEvent,
 } from 'react-native';
+import {useState} from 'react';
 import {loginUser, registerUser} from '../actions/userAction';
-
 import {useAppDispatch} from '../helper/hooks';
 
 const LoginRegister: React.FC = () => {
@@ -29,10 +29,11 @@ const LoginRegister: React.FC = () => {
 
   const dispatch = useAppDispatch();
 
-  const handleLogin = (e: any) => {
+  const handleLogin = (e: GestureResponderEvent) => {
     e.preventDefault();
     if (loginEmail !== '' && loginPassword !== '') {
-      dispatch(loginUser(loginEmail, loginPassword));
+      const loginData = {loginEmail, loginPassword};
+      dispatch(loginUser(loginData));
 
       setLoginEmail('');
       setLoginPassword('');
@@ -51,7 +52,7 @@ const LoginRegister: React.FC = () => {
     }
   };
 
-  const handleRegister = (e: any) => {
+  const handleRegister = (e: GestureResponderEvent) => {
     e.preventDefault();
     if (
       registerName !== '' &&
@@ -59,18 +60,21 @@ const LoginRegister: React.FC = () => {
       registerPassword !== '' &&
       registerPhoneNo !== ''
     ) {
-      dispatch(
-        registerUser(
+      if (registerPassword.length < 8) {
+        Alert.alert('Password is to Short: "min 8 char"');
+      } else {
+        const registerdata = {
           registerName,
           registerEmail,
           registerPhoneNo,
           registerPassword,
-        ),
-      );
-      setRegisterName('');
-      setRegisterEmail('');
-      setRegisterPassword('');
-      setRegisterPhoneNo('');
+        };
+        dispatch(registerUser(registerdata));
+        setRegisterName('');
+        setRegisterEmail('');
+        setRegisterPassword('');
+        setRegisterPhoneNo('');
+      }
     } else {
       Alert.alert('Please Fill all the details.');
     }

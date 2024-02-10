@@ -5,24 +5,37 @@ import {
   REGISTER_USER_REQUEST,
   REGISTER_USER_SUCCESS,
   REGISTER_USER_FAIL,
+  LOAD_USER_REQUEST,
+  LOAD_USER_SUCCESS,
+  LOAD_USER_FAIL,
   LOGOUT_SUCCESS,
   LOGOUT_FAIL,
-  // CLEAR_ERRORS,
+  UPDATE_PROFILE_REQUEST,
+  UPDATE_PROFILE_SUCCESS,
+  UPDATE_PROFILE_RESET,
+  UPDATE_PROFILE_FAIL,
+  CHANGE_PASSWORD_REQUEST,
+  CHANGE_PASSWORD_SUCCESS,
+  CHANGE_PASSWORD_RESET,
+  CHANGE_PASSWORD_FAIL,
 } from '../constants/userConstant';
+import {UserAction} from '../helper/type';
 
-export const userReducer = (state = {user: {}}, action: any) => {
+export const userReducer = (state = {user: []}, action: UserAction) => {
   switch (action.type) {
     case LOGIN_REQUEST:
-    case REGISTER_USER_REQUEST: {
+    case REGISTER_USER_REQUEST:
+    case LOAD_USER_REQUEST: {
       return {
-        loading: true,
+        ...state,
         isAuthenticated: false,
-        user: action.payload,
+        loading: true,
       };
     }
 
     case LOGIN_SUCCESS:
     case REGISTER_USER_SUCCESS:
+    case LOAD_USER_SUCCESS:
       return {
         ...state,
         loading: false,
@@ -32,7 +45,7 @@ export const userReducer = (state = {user: {}}, action: any) => {
     case LOGOUT_SUCCESS:
       return {
         loading: false,
-        user: null,
+        user: [],
         isAuthenticated: false,
       };
     case LOGIN_FAIL:
@@ -41,7 +54,7 @@ export const userReducer = (state = {user: {}}, action: any) => {
         ...state,
         loading: false,
         isAuthenticated: false,
-        user: null,
+        user: [],
         error: action.payload,
       };
 
@@ -52,11 +65,46 @@ export const userReducer = (state = {user: {}}, action: any) => {
         error: action.payload,
       };
 
-    // case CLEAR_ERRORS:
-    //   return {
-    //     ...state,
-    //     error: null,
-    //   };
+    case LOAD_USER_FAIL:
+      return {
+        loading: false,
+        isAuthenticated: false,
+        user: [],
+        error: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export const updateReducer = (state = {}, action: UserAction) => {
+  switch (action.type) {
+    case UPDATE_PROFILE_REQUEST:
+    case CHANGE_PASSWORD_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+    case UPDATE_PROFILE_SUCCESS:
+    case CHANGE_PASSWORD_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        isUpdated: action.payload,
+      };
+    case UPDATE_PROFILE_RESET:
+    case CHANGE_PASSWORD_RESET:
+      return {
+        ...state,
+        isUpdated: false,
+      };
+    case UPDATE_PROFILE_FAIL:
+    case CHANGE_PASSWORD_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
     default:
       return state;
   }

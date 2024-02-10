@@ -8,22 +8,17 @@ type User = {
   phoneNo: string;
   password: string | undefined;
   user_id: string;
+  userrole: string;
 };
-interface AuthenticatedRequest extends Request {
+type AuthenticatedRequest = Request & {
   user?: User | undefined;
-}
+};
 
-exports.newTravel = catchAsyncError(
+// New Booking
+exports.createNewTravel = catchAsyncError(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const { location, noOfPeople, selectedDate, cost, tripPackage } = req.body;
-    console.log(
-      location,
-      noOfPeople,
-      selectedDate,
-      cost,
-      tripPackage,
-      "travel details"
-    );
+
     if (!req.user) {
       return res.status(401).json({ error: "User not authenticated" });
     }
@@ -61,6 +56,7 @@ exports.newTravel = catchAsyncError(
 );
 
 type TravelDetails = {
+  travel_id: string;
   user_id: string;
   location: string;
   noOfPeople: string;
@@ -69,7 +65,8 @@ type TravelDetails = {
   tripPackage: string;
 };
 
-exports.getPaymentDetails = catchAsyncError(
+// Get Travel Details of loggedin user
+exports.getTravelDetails = catchAsyncError(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       if (!req.user) {
@@ -84,17 +81,46 @@ exports.getPaymentDetails = catchAsyncError(
             console.error("Error checking login data: " + selectError);
             return next(selectError);
           } else {
-            console.log(travelDetails);
-            if (travelDetails.length >= 1) {
+            if (travelDetails.length >= 0) {
               res.json({ travelDetails });
             } else {
-              console.log("User is not Authorized");
+              console.log("empty list");
             }
           }
         }
       );
     } catch (error) {
       console.log("error getting travel details");
+    }
+  }
+);
+
+// Delete Travel Detail
+exports.deleteTravelDetails = catchAsyncError(
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ error: "User not authenticated" });
+      }
+      const deletingTravelDetails =
+        "DELETE FROM traveldetails  WHERE user_id=? and travel_id=?";
+      pool.query(
+        deletingTravelDetails,
+        [req.user.user_id, req.params.id],
+        (selectError: string, result: any) => {
+          if (selectError) {
+            console.error("Error checking login data: " + selectError);
+            return next(selectError);
+          } else {
+            if (result.affectedRows > 0) {
+              console.log("suuccess fully deleted", result);
+              res.json({ message: "Deleted Successfully" });
+            }
+          }
+        }
+      );
+    } catch (error) {
+      console.log("error in deleting travel details");
     }
   }
 );

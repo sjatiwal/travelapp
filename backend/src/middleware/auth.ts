@@ -9,10 +9,13 @@ type User = {
   phoneNo: string;
   password: string | undefined;
   user_id: string;
+  userrole: string;
 };
 interface AuthenticatedRequest extends Request {
   user?: User;
 }
+
+// user Authentication
 exports.isAuthenticatedUser = catchAsyncErrors(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
@@ -49,3 +52,19 @@ exports.isAuthenticatedUser = catchAsyncErrors(
     }
   }
 );
+
+// userrole==="admin"
+exports.authorizedRoles = (...roles: string[]) => {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({ error: "User not authenticated" });
+    }
+    if (!roles.includes(req.user.userrole)) {
+      return console.log(
+        `Role:${req.user.username} is a ${req.user.userrole}, so not authorized`,
+        403
+      );
+    }
+    next();
+  };
+};
